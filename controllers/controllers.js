@@ -377,7 +377,7 @@ const getTagCountByTagName = async (req,res) => {
             message:"Bad request"
         })
     
-    let connection = await establishConnection(true)
+    let connection = await establishConnection(false)
     
     try
     {
@@ -417,7 +417,7 @@ const createComment = async (req,res) => {
     else
         IDOfCommentToReply = null
 
-    let connection = await establishConnection(true)
+    let connection = await establishConnection(false)
     try
     {
         commentPayload = await connection.execute("INSERT INTO CommentService.Comment VALUES (0,?,NOW(),NOW())",[comment])
@@ -456,7 +456,7 @@ const getCommentsByPost = async (req,res) => {
         })
     
     
-    let connection = await establishConnection(true)
+    let connection = await establishConnection(false)
     try
     {
         //query that uses the like keyword

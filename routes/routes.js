@@ -24,15 +24,12 @@ router.get('/getPostOne/:postID',getPostOne)
 
 
 router.post('/associatePostWithTag',associatePostWithTag)
-
 router.get('/getTagsPerPost/:postID',getTagsPerPost)
-
 router.get('/getPostsPerTag/:tagName',getPostsPerTag)
-
 router.get('/getTagCount/:tagName',getTagCountByTagName)
 
-router.post('/createComment',createComment)
 
+router.post('/createComment',createComment)
 router.get('/getPostsByPage/:pageNumber/:limitPerPage/:query',getCommentsByPost)
 
 module.exports = router; 

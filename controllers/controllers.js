@@ -477,4 +477,155 @@ const getCommentsByPost = async (req,res) => {
 }
 
 
-module.exports = {createPost,getPostsByPage,getHotPostsByPage,getNewPostsByPage,getTopPostsByPage,getActivePostsByPage,getPostOne,associatePostWithTag,getTagsPerPost,getTagCountByTagName,getPostsPerTag,createComment,getCommentsByPost}
+const editPostOne = async (req,res) => {
+    const reqLength = Object.keys(req.body).length
+    const {postID,title,description} = req.body
+    // request validation, if postID is not included in the request parameters,
+    // the request will fail.
+    if(reqLength != 3 || !postID || !title || !description)
+        return res.status(400).json({
+            message:"Bad request"
+        })
+    
+    let connection = await establishConnection(true)
+    
+    try
+    {
+        await connection.execute("UPDATE PostService.post SET title = ?, description = ?, updatedAt = NOW() WHERE PostService.post.postID = ?",[title,description,postID])
+        postArr = await connection.execute("SELECT * FROM PostService.post WHERE PostService.post.postID = ?",[postID])
+    }   
+    catch(err)
+    {
+        await connection.destroy()
+        return res.status(400).json({returnData:null,message:`${err}`})
+    }
+    await connection.destroy()
+
+    // returns either true or false depending if the credentials matched with the database
+    if (postArr)
+        res.status(200).json({returnData:postArr[0]})
+    else
+        res.status(200).json({returnData:false})
+}
+
+
+
+const deletePostOne = async (req,res) => {
+    const reqLength = Object.keys(req.params).length
+    const {postID} = req.params
+    // request validation, if postID is not included in the request parameters,
+    // the request will fail.
+    if(reqLength != 1 || !postID)
+        return res.status(400).json({
+            message:"Bad request"
+        })
+    
+    let connection = await establishConnection(true)
+    
+    try
+    {
+        await connection.execute("DELETE FROM PostService.post WHERE postID = ?",[postID])
+        await connection.execute("DELETE FROM InteractionService.interaction WHERE postID = ?",[postID])
+        await connection.execute("DELETE FROM InteractionService.view WHERE postID = ?",[postID])
+        await connection.execute("DELETE FROM InteractionService.vote WHERE postID = ?",[postID])
+    }   
+    catch(err)
+    {
+        await connection.destroy()
+        return res.status(400).json({returnData:null,message:`${err}`})
+    }
+    await connection.destroy()
+
+    // returns either true or false depending if the credentials matched with the database
+    res.status(200).json({message:"Successfully deleted data!"})
+
+}
+
+
+
+const getPostsByUsername = async (req,res) => {
+    const reqLength = Object.keys(req.params).length
+    const {userID} = req.params
+    // request validation, if postID is not included in the request parameters,
+    // the request will fail.
+    if(reqLength != 1 || !userID)
+        return res.status(400).json({
+            message:"Bad request"
+        })
+    
+    let connection = await establishConnection(true)
+    
+    try
+    {
+        postArr = await connection.execute("SELECT * FROM InteractionService.interaction LEFT JOIN PostService.post ON InteractionService.interaction.postID = PostService.post.postID WHERE InteractionService.interaction.userID = ? AND PostService.post.isAnonymous = 0 ORDER BY PostService.post.createdAt DESC",[userID])
+    }   
+    catch(err)
+    {
+        await connection.destroy()
+        return res.status(400).json({returnData:null,message:`${err}`})
+    }
+    await connection.destroy()
+
+    // returns either true or false depending if the credentials matched with the database
+    if (postArr)
+        res.status(200).json({returnData:postArr[0]})
+    else
+        res.status(200).json({returnData:null})
+}
+
+const getAnswersByUsername = async (req,res) => {
+    const reqLength = Object.keys(req.params).length
+    const {userID} = req.params
+    // request validation, if postID is not included in the request parameters,
+    // the request will fail.
+    if(reqLength != 1 || !userID)
+        return res.status(400).json({
+            message:"Bad request"
+        })
+    
+    let connection = await establishConnection(true)
+    
+    try
+    {
+        commentArr = await connection.execute("SELECT * FROM InteractionService.interaction LEFT JOIN CommentService.comment ON InteractionService.interaction.commentID = CommentService.comment.commentID WHERE InteractionService.interaction.userID = ? AND InteractionService.interaction.commentID IS NOT NULL AND InteractionService.interaction.parentID IS NULL ORDER BY PostService.post.createdAt DESC",[userID])
+    }   
+    catch(err)
+    {
+        await connection.destroy()
+        return res.status(400).json({returnData:null,message:`${err}`})
+    }
+    await connection.destroy()
+
+    // returns either true or false depending if the credentials matched with the database
+    if (commentArr)
+        res.status(200).json({returnData:commentArr[0]})
+    else
+        res.status(200).json({returnData:null})
+}
+
+const unassociatePostTag = async (req,res) => {
+    const reqLength = Object.keys(req.params).length
+    const {postID} = req.params
+    
+    // request validation, if either title,description, or username is not included in the request parameters,
+    // the request will fail.
+    if(reqLength != 1 || !postID)
+        return res.status(400).json({message:"Bad request"})
+    
+    let connection = await establishConnection(false)
+    try
+    {
+        await connection.execute("DELETE FROM PostTagService.PostTag WHERE postID = ?",[postID])
+    }
+    catch(err)
+    {
+        await connection.destroy()
+        return res.status(400).json({message:`${err}`})
+    }
+    await connection.destroy()
+    return res.status(200).json({message:"Successfully unassociated tags from a post!"}) 
+}
+
+
+
+module.exports = {createPost,getPostsByPage,getHotPostsByPage,getNewPostsByPage,getTopPostsByPage,getActivePostsByPage,getPostOne,associatePostWithTag,getTagsPerPost,getTagCountByTagName,getPostsPerTag,createComment,getCommentsByPost,editPostOne,deletePostOne,getPostsByUsername,getAnswersByUsername,unassociatePostTag}

@@ -8,7 +8,7 @@ const initializeDatabase = async () =>
     const createCommentDatabaseQuery = "CREATE DATABASE IF NOT EXISTS CommentService;"
 
     const createPostTagTableQuery = "CREATE TABLE IF NOT EXISTS PostTagService.PostTag(postID INT, tagName TEXT);"
-    const createPostTableQuery = "CREATE TABLE IF NOT EXISTS PostService.Post(postID INT PRIMARY KEY AUTO_INCREMENT, title TEXT, description TEXT, createdAt DATETIME, updatedAt DATETIME);"
+    const createPostTableQuery = "CREATE TABLE IF NOT EXISTS Post(postID INT PRIMARY KEY AUTO_INCREMENT, title TEXT, description TEXT, createdAt DATETIME, updatedAt DATETIME,isAnonymous INT);"
     const createCommentTableQuery = "CREATE TABLE IF NOT EXISTS CommentService.Comment(commentID INT PRIMARY KEY AUTO_INCREMENT, comment TEXT, createdAt DATETIME, updatedAt DATETIME);"
     
     let connection

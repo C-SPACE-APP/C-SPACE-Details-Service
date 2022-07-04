@@ -20,8 +20,8 @@ router.get('/getNewPostsByPage/:pageNumber/:limitPerPage',getNewPostsByPage)
 router.get('/getTopPostsByPage/:pageNumber/:limitPerPage/:query',getTopPostsByPage)
 router.get('/getTopPostsByPage/:pageNumber/:limitPerPage',getTopPostsByPage)
 
-router.get('/getTopPostsByPage/:pageNumber/:limitPerPage/:query',getActivePostsByPage)
-router.get('/getTopPostsByPage/:pageNumber/:limitPerPage',getActivePostsByPage)
+router.get('/getActivePostsByPage/:pageNumber/:limitPerPage/:query',getActivePostsByPage)
+router.get('/getActivePostsByPage/:pageNumber/:limitPerPage',getActivePostsByPage)
 
 router.get('/getPostOne/:postID',getPostOne)
 

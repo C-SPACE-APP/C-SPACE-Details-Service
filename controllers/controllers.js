@@ -955,7 +955,7 @@ const getAnswersByUsername = async (req,res) => {
     
     try
     {
-        commentArr = await connection.execute("SELECT * FROM InteractionService.interaction LEFT JOIN CommentService.comment ON InteractionService.interaction.commentID = CommentService.comment.commentID WHERE InteractionService.interaction.userID = ? AND InteractionService.interaction.commentID IS NOT NULL AND InteractionService.interaction.parentID IS NULL ORDER BY PostService.post.createdAt DESC",[userID])
+        commentArr = await connection.execute("SELECT * FROM InteractionService.interaction LEFT JOIN CommentService.`comment` ON InteractionService.interaction.commentID = CommentService.`comment`.commentID WHERE InteractionService.interaction.userID = ? AND InteractionService.interaction.commentID IS NOT NULL AND InteractionService.interaction.parentID IS NULL ORDER BY CommentService.`comment`.createdAt DESC",[userID])
     }   
     catch(err)
     {

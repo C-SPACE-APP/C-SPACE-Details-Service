@@ -1,0 +1,28 @@
+version : '3'
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: interaction-service
+        ports:
+            - '3005:3005'
+        depends_on:
+            - post-db
+        networks:
+            - cspace-backend
+            - post-network
+
+    post-db:
+        image: mysql:5.7
+        container_name: post-db
+        ports:
+            - "3010:3010"
+        networks:
+            - post-network
+
+networks:
+   cspace-backend:
+      external: true
+   post-network:
+      external: true

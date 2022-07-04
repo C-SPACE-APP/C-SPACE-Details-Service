@@ -566,9 +566,8 @@ const getPostsPerTag = async (req,res) => {
     const reqLength = Object.keys(req.params).length
     const {pageNumber,limitPerPage,tagName} = req.params
     const offset = String((pageNumber - 1) * limitPerPage)
-    let tagNameArray
     // request validation
-    if(reqLength != 1 || !tagName)
+    if(reqLength != 3 || !tagName || !pageNumber || !limitPerPage)
         return res.status(400).json({
             message:"Bad request"
         })

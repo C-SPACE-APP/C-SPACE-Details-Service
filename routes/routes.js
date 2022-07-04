@@ -29,7 +29,7 @@ router.get('/getPostsByUsername/:userID',getPostsByUsername)
 
 router.post('/associatePostWithTag',associatePostWithTag)
 router.get('/getTagsPerPost/:postID',getTagsPerPost)
-router.get('/getPostsPerTag/:tagName',getPostsPerTag)
+router.get('/getPostsPerTag/:pageNumber/:limitPerPage/:tagName',getPostsPerTag)
 router.get('/getTagCount/:tagName',getTagCountByTagName)
 router.delete('/unassociatePostTag/:postID',unassociatePostTag)
 

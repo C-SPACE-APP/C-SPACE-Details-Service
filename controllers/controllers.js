@@ -355,7 +355,7 @@ const getActivePostsByPage = async (req,res) => {
     let connection = await establishConnection(true)
     try
     {
-        postArr = await connection.execute("SELECT * FROM PostService.post RIGHT JOIN InteractionService.interaction ON PostService.post.postID = InteractionService.interaction.postID LEFT JOIN CommentService.`comment` ON InteractionService.interaction.commentID = CommentService.`comment`.commentID WHERE PostService.post.title LIKE ? GROUP BY InteractionService.interaction.interactionID ORDER BY COUNT(CASE WHEN InteractionService.interaction.commentID IS NOT NULL AND TIMESTAMPDIFF(HOUR,CommentService.`comment`.createdAt,NOW())  <= 24 THEN 1 ELSE NULL END) DESC LIMIT ? OFFSET ?",[searchQuery,limitPerPage,offset])
+        postArr = await connection.execute("SELECT * FROM (SELECT interactionID,postID, COUNT(CASE WHEN InteractionService.interaction.commentID IS NOT NULL AND TIMESTAMPDIFF(HOUR,CommentService.`comment`.createdAt,NOW())  <= 24 THEN 1 ELSE NULL END) AS \"activeCommentCount\" FROM InteractionService.interaction LEFT JOIN CommentService.`comment` ON InteractionService.interaction.commentID = CommentService.`comment`.commentID  GROUP BY InteractionService.interaction.postID) AS priority LEFT JOIN PostService.post ON priority.postID = PostService.post.postID WHERE title LIKE ? ORDER BY activeCommentCount DESC LIMIT ? OFFSET ?",[searchQuery,limitPerPage,offset])
     }   
     catch(err)
     {

@@ -564,11 +564,11 @@ message - The status message of the endpoint
 
 const getPostsPerTag = async (req,res) => {
     const reqLength = Object.keys(req.params).length
-    const {postID} = req.params
+    const {pageNumber,limitPerPage,tagName} = req.params
+    const offset = String((pageNumber - 1) * limitPerPage)
     let tagNameArray
-    // request validation, if either username or password is not included in the request parameters,
-    // the request will fail.
-    if(reqLength != 1 || !postID)
+    // request validation
+    if(reqLength != 1 || !tagName)
         return res.status(400).json({
             message:"Bad request"
         })
@@ -577,7 +577,7 @@ const getPostsPerTag = async (req,res) => {
     
     try
     {
-        postArr = await connection.execute("SELECT * FROM PostTagService.PostTag INNER JOIN InteractionService.interaction ON PostTagService.posttag.postID = InteractionService.interaction.postID WHERE PostTagService.posttag.tagName = ? AND InteractionService.interaction.commentID IS NULL AND InteractionService.interaction.parentID IS NULL",[postID])
+        postArr = await connection.execute("SELECT * FROM PostTagService.PostTag INNER JOIN InteractionService.interaction ON PostTagService.posttag.postID = InteractionService.interaction.postID LEFT JOIN PostService.post ON InteractionService.interaction.postID = PostService.post.postID WHERE PostTagService.posttag.tagName LIKE ? AND InteractionService.interaction.commentID IS NULL AND InteractionService.interaction.parentID IS NULL ORDER BY InteractionService.interaction.interactionID LIMIT ? OFFSET ?",[tagName,limitPerPage,offset])
     }   
     catch(err)
     {
@@ -588,7 +588,7 @@ const getPostsPerTag = async (req,res) => {
 
     // returns either true or false depending if the credentials matched with the database
     if (postArr)
-        res.status(200).json({returnData:tagNameArray,message:"Successfully retrieved posts by tag"})
+        res.status(200).json({returnData:postArr[0],message:"Successfully retrieved posts by tag"})
     else
         res.status(404).json({returnData:false,message:"Failed to retrieve posts by tag"})
 }

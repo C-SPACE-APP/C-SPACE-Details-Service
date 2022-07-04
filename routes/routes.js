@@ -1,4 +1,4 @@
-const {createPost,getPostsByPage,getPostOne, getHotPostsByPage, getNewPostsByPage, getTopPostsByPage, associatePostWithTag, getTagsPerPost, getPostsPerTag, getTagCountByTagName, createComment, getCommentsByPost, getAnswersByUsername, unassociatePostTag, getPostsByUsername, deletePostOne, editPostOne} = require('../controllers/controllers')
+const {createPost,getPostsByPage,getPostOne, getHotPostsByPage, getNewPostsByPage, getTopPostsByPage, associatePostWithTag, getTagsPerPost, getPostsPerTag, getTagCountByTagName, createComment, getCommentsByPost, getAnswersByUsername, unassociatePostTag, getPostsByUsername, deletePostOne, editPostOne, getActivePostsByPage} = require('../controllers/controllers')
 const {Authorize} = require('../middlewares')
 const express = require('express');
 
@@ -19,6 +19,9 @@ router.get('/getNewPostsByPage/:pageNumber/:limitPerPage',getNewPostsByPage)
 
 router.get('/getTopPostsByPage/:pageNumber/:limitPerPage/:query',getTopPostsByPage)
 router.get('/getTopPostsByPage/:pageNumber/:limitPerPage',getTopPostsByPage)
+
+router.get('/getTopPostsByPage/:pageNumber/:limitPerPage/:query',getActivePostsByPage)
+router.get('/getTopPostsByPage/:pageNumber/:limitPerPage',getActivePostsByPage)
 
 router.get('/getPostOne/:postID',getPostOne)
 

@@ -296,7 +296,7 @@ const getTopPostsByPage = async (req,res) => {
     let connection = await establishConnection(true)
     try
     {
-        postArr = await connection.execute("SELECT * FROM InteractionService.vote RIGHT JOIN InteractionService.interaction ON InteractionService.vote.interactionID = InteractionService.interaction.interactionID LEFT JOIN PostService.post ON InteractionService.interaction.postID = PostService.post.postID WHERE PostService.post.title LIKE ? AND InteractionService.interaction.commentID IS NULL AND InteractionService.interaction.parentID IS NULL GROUP BY InteractionService.vote.voteID ORDER BY COUNT(CASE WHEN InteractionService.vote.vote = 1 THEN 1 ELSE NULL END) - COUNT(CASE WHEN InteractionService.vote.vote = 0 THEN 1 ELSE NULL END) DESC LIMIT ? OFFSET ?",[searchQuery,limitPerPage,offset])
+        postArr = await connection.execute("SELECT * FROM InteractionService.vote RIGHT JOIN InteractionService.interaction ON InteractionService.vote.interactionID = InteractionService.interaction.interactionID LEFT JOIN PostService.post ON InteractionService.interaction.postID = PostService.post.postID WHERE PostService.post.title LIKE ? AND InteractionService.interaction.commentID IS NULL AND InteractionService.interaction.parentID IS NULL GROUP BY InteractionService.interaction.interactionID ORDER BY COUNT(CASE WHEN InteractionService.vote.vote = 1 THEN 1 ELSE NULL END) - COUNT(CASE WHEN InteractionService.vote.vote = 0 THEN 1 ELSE NULL END) DESC LIMIT ? OFFSET ?",[searchQuery,limitPerPage,offset])
     }   
     catch(err)
     {
